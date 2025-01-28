@@ -130,6 +130,9 @@ func InitApp(name string, creds postgres.Creds, metrics bool, rc redis.Creds) (*
 		catalogs.NewRepository,
 		catalogs.New,
 
+		legalentities.NewRepository, //добавил
+		legalentities.NewService, //добавил
+
 		NewApp,
 	)
 
@@ -207,6 +210,7 @@ func NewApp(name string, conf *configs.Configs, gdb *postgres.GDB, rds *redis.RD
 	w.SMSService = smsService
 	w.AgentsService = agentsService
 	w.PermissionsService = permissionsService
+	w.LegalEntitiesService = legalentitiesService // добавил
 
 	return w
 }

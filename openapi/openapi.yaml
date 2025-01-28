@@ -651,85 +651,82 @@ paths:
           description: Unauthorized
 
   #начало
-  /legal-entities:
-   get:
-    tags:
-      - legalentities
-    summary: Get all legal entities
-    operationId: getAllLegalEntities
-    responses:
-      '200':
-        description: A list of legal entities
+  /federation/legal-entities:
+    get:
+      tags:
+        - federation
+      summary: Get all legal entities
+      operationId: getAllLegalEntities
+      responses:
+        '200':
+          description: A list of legal entities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LegalEntityDTO'
+    post:
+      tags:
+        - federation
+      summary: Create a legal entity
+      operationId: сreateLegalEntity
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: array
-              items:
+              $ref: '#/components/schemas/LegalEntityDTO'
+      responses:
+        '201':
+          description: Legal entity created
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/LegalEntityDTO'
-   post:
-    tags:
-      - legalentities
-    summary: Create a legal entity
-    operationId: createLegalEntity
-    requestBody:
-      required: true
-      content:
-        application/json:
+  /federation/legal-entities/{id}:
+    put:
+      tags:
+        - federation
+      summary: Update a legal entity
+      operationId: updateLegalEntity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the legal entity
           schema:
-            $ref: '#/components/schemas/LegalEntityDTO'
-    responses:
-      '201':
-        description: Legal entity created
+            type: string
+            format: uuid
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LegalEntityDTO'
-
-  /legal-entities/{id}:
-   put:
-    tags:
-      - legalentities
-    summary: Update a legal entity
-    operationId: updateLegalEntity
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: Unique identifier of the legal entity
-        schema:
-          type: string
-          format: uuid
-    requestBody:
-      required: true
-      content:
-        application/json:
+      responses:
+        '200':
+          description: Legal entity updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegalEntityDTO'
+    delete:
+      tags:
+        - federation
+      summary: Delete a legal entity
+      operationId: deleteLegalEntity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the legal entity
           schema:
-            $ref: '#/components/schemas/LegalEntityDTO'
-    responses:
-      '200':
-        description: Legal entity updated
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LegalEntityDTO'
-
-   delete:
-    tags:
-      - legalentities
-    summary: Delete a legal entity
-    operationId: deleteLegalEntity
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: Unique identifier of the legal entity
-        schema:
-          type: string
-          format: uuid
-    responses:
-      '204':
-        description: Legal entity deleted
-
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Legal entity deleted
 #конец
   /permissions:
     post:

@@ -101,6 +101,21 @@ type InviteCreateRequest struct {
 // InviteDTO defines model for InviteDTO.
 type InviteDTO = dto.InviteDTO
 
+// LegalEntityDTO defines model for LegalEntityDTO.
+type LegalEntityDTO struct {
+	// CreatedAt Время создания юридического лица.
+	CreatedAt time.Time `json:"created_at"`
+
+	// Id Уникальный идентификатор юридического лица.
+	Id openapi_types.UUID `json:"id"`
+
+	// Name Название юридического лица.
+	Name string `json:"name"`
+
+	// UpdatedAt Время последнего обновления юридического лица.
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 // NameRequest defines model for NameRequest.
 type NameRequest struct {
 	Name string `json:"name" validate:"trim,name,min=0,max=100"`
@@ -384,6 +399,12 @@ type PostCompanyUUIDUserJSONRequestBody = CompanyAddUserRequest
 // PostFederationJSONRequestBody defines body for PostFederation for application/json ContentType.
 type PostFederationJSONRequestBody = FederationCreateRequest
 
+// СreateLegalEntityJSONRequestBody defines body for СreateLegalEntity for application/json ContentType.
+type СreateLegalEntityJSONRequestBody = LegalEntityDTO
+
+// UpdateLegalEntityJSONRequestBody defines body for UpdateLegalEntity for application/json ContentType.
+type UpdateLegalEntityJSONRequestBody = LegalEntityDTO
+
 // PostFederationUUIDAgentJSONRequestBody defines body for PostFederationUUIDAgent for application/json ContentType.
 type PostFederationUUIDAgentJSONRequestBody = AgentCreateRequest
 
@@ -527,6 +548,18 @@ type ServerInterface interface {
 
 	// (POST /federation)
 	PostFederation(ctx echo.Context) error
+	// Get all legal entities
+	// (GET /federation/legal-entities)
+	GetAllLegalEntities(ctx echo.Context) error
+	// Create a legal entity
+	// (POST /federation/legal-entities)
+	СreateLegalEntity(ctx echo.Context) error
+	// Delete a legal entity
+	// (DELETE /federation/legal-entities/{id})
+	DeleteLegalEntity(ctx echo.Context, id openapi_types.UUID) error
+	// Update a legal entity
+	// (PUT /federation/legal-entities/{id})
+	UpdateLegalEntity(ctx echo.Context, id openapi_types.UUID) error
 
 	// (DELETE /federation/{UUID})
 	DeleteFederationUUID(ctx echo.Context, uUID Uuid) error
@@ -1197,6 +1230,64 @@ func (w *ServerInterfaceWrapper) PostFederation(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.PostFederation(ctx)
+	return err
+}
+
+// GetAllLegalEntities converts echo context to params.
+func (w *ServerInterfaceWrapper) GetAllLegalEntities(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetAllLegalEntities(ctx)
+	return err
+}
+
+// СreateLegalEntity converts echo context to params.
+func (w *ServerInterfaceWrapper) СreateLegalEntity(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.СreateLegalEntity(ctx)
+	return err
+}
+
+// DeleteLegalEntity converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteLegalEntity(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteLegalEntity(ctx, id)
+	return err
+}
+
+// UpdateLegalEntity converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateLegalEntity(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateLegalEntity(ctx, id)
 	return err
 }
 
@@ -2192,6 +2283,10 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/company/:UUID/user", wrapper.PostCompanyUUIDUser)
 	router.DELETE(baseURL+"/company/:UUID/user/:userUUID", wrapper.DeleteCompanyUUIDUserUserUUID)
 	router.POST(baseURL+"/federation", wrapper.PostFederation)
+	router.GET(baseURL+"/federation/legal-entities", wrapper.GetAllLegalEntities)
+	router.POST(baseURL+"/federation/legal-entities", wrapper.СreateLegalEntity)
+	router.DELETE(baseURL+"/federation/legal-entities/:id", wrapper.DeleteLegalEntity)
+	router.PUT(baseURL+"/federation/legal-entities/:id", wrapper.UpdateLegalEntity)
 	router.DELETE(baseURL+"/federation/:UUID", wrapper.DeleteFederationUUID)
 	router.GET(baseURL+"/federation/:UUID", wrapper.GetFederationUUID)
 	router.GET(baseURL+"/federation/:UUID/agent", wrapper.GetFederationUUIDAgent)
@@ -2678,6 +2773,73 @@ type PostFederationResponseObject interface {
 type PostFederation200JSONResponse UUIDResponse
 
 func (response PostFederation200JSONResponse) VisitPostFederationResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetAllLegalEntitiesRequestObject struct {
+}
+
+type GetAllLegalEntitiesResponseObject interface {
+	VisitGetAllLegalEntitiesResponse(w http.ResponseWriter) error
+}
+
+type GetAllLegalEntities200JSONResponse []LegalEntityDTO
+
+func (response GetAllLegalEntities200JSONResponse) VisitGetAllLegalEntitiesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type СreateLegalEntityRequestObject struct {
+	Body *СreateLegalEntityJSONRequestBody
+}
+
+type СreateLegalEntityResponseObject interface {
+	VisitСreateLegalEntityResponse(w http.ResponseWriter) error
+}
+
+type СreateLegalEntity201JSONResponse LegalEntityDTO
+
+func (response СreateLegalEntity201JSONResponse) VisitСreateLegalEntityResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteLegalEntityRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type DeleteLegalEntityResponseObject interface {
+	VisitDeleteLegalEntityResponse(w http.ResponseWriter) error
+}
+
+type DeleteLegalEntity204Response struct {
+}
+
+func (response DeleteLegalEntity204Response) VisitDeleteLegalEntityResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type UpdateLegalEntityRequestObject struct {
+	Id   openapi_types.UUID `json:"id"`
+	Body *UpdateLegalEntityJSONRequestBody
+}
+
+type UpdateLegalEntityResponseObject interface {
+	VisitUpdateLegalEntityResponse(w http.ResponseWriter) error
+}
+
+type UpdateLegalEntity200JSONResponse LegalEntityDTO
+
+func (response UpdateLegalEntity200JSONResponse) VisitUpdateLegalEntityResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
@@ -3612,6 +3774,18 @@ type StrictServerInterface interface {
 
 	// (POST /federation)
 	PostFederation(ctx context.Context, request PostFederationRequestObject) (PostFederationResponseObject, error)
+	// Get all legal entities
+	// (GET /federation/legal-entities)
+	GetAllLegalEntities(ctx context.Context, request GetAllLegalEntitiesRequestObject) (GetAllLegalEntitiesResponseObject, error)
+	// Create a legal entity
+	// (POST /federation/legal-entities)
+	СreateLegalEntity(ctx context.Context, request СreateLegalEntityRequestObject) (СreateLegalEntityResponseObject, error)
+	// Delete a legal entity
+	// (DELETE /federation/legal-entities/{id})
+	DeleteLegalEntity(ctx context.Context, request DeleteLegalEntityRequestObject) (DeleteLegalEntityResponseObject, error)
+	// Update a legal entity
+	// (PUT /federation/legal-entities/{id})
+	UpdateLegalEntity(ctx context.Context, request UpdateLegalEntityRequestObject) (UpdateLegalEntityResponseObject, error)
 
 	// (DELETE /federation/{UUID})
 	DeleteFederationUUID(ctx context.Context, request DeleteFederationUUIDRequestObject) (DeleteFederationUUIDResponseObject, error)
@@ -4445,6 +4619,114 @@ func (sh *strictHandler) PostFederation(ctx echo.Context) error {
 		return err
 	} else if validResponse, ok := response.(PostFederationResponseObject); ok {
 		return validResponse.VisitPostFederationResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetAllLegalEntities operation middleware
+func (sh *strictHandler) GetAllLegalEntities(ctx echo.Context) error {
+	var request GetAllLegalEntitiesRequestObject
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetAllLegalEntities(ctx.Request().Context(), request.(GetAllLegalEntitiesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetAllLegalEntities")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetAllLegalEntitiesResponseObject); ok {
+		return validResponse.VisitGetAllLegalEntitiesResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// СreateLegalEntity operation middleware
+func (sh *strictHandler) СreateLegalEntity(ctx echo.Context) error {
+	var request СreateLegalEntityRequestObject
+
+	var body СreateLegalEntityJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.СreateLegalEntity(ctx.Request().Context(), request.(СreateLegalEntityRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "СreateLegalEntity")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(СreateLegalEntityResponseObject); ok {
+		return validResponse.VisitСreateLegalEntityResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteLegalEntity operation middleware
+func (sh *strictHandler) DeleteLegalEntity(ctx echo.Context, id openapi_types.UUID) error {
+	var request DeleteLegalEntityRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteLegalEntity(ctx.Request().Context(), request.(DeleteLegalEntityRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteLegalEntity")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteLegalEntityResponseObject); ok {
+		return validResponse.VisitDeleteLegalEntityResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// UpdateLegalEntity operation middleware
+func (sh *strictHandler) UpdateLegalEntity(ctx echo.Context, id openapi_types.UUID) error {
+	var request UpdateLegalEntityRequestObject
+
+	request.Id = id
+
+	var body UpdateLegalEntityJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateLegalEntity(ctx.Request().Context(), request.(UpdateLegalEntityRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateLegalEntity")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(UpdateLegalEntityResponseObject); ok {
+		return validResponse.VisitUpdateLegalEntityResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
