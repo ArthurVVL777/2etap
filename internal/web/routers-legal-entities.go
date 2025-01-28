@@ -1,6 +1,7 @@
 package web
 
 import (
+	
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -80,3 +81,7 @@ func deleteLegalEntityHandler(service *legalentities.Service) gin.HandlerFunc {
 		c.JSON(http.StatusNoContent, nil)
 	}
 }
+
+
+
+

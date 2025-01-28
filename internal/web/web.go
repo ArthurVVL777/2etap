@@ -27,6 +27,7 @@ import (
 	"github.com/krisch/crm-backend/internal/app"
 	"github.com/krisch/crm-backend/internal/configs"
 	"github.com/krisch/crm-backend/internal/helpers"
+	"github.com/krisch/crm-backend/internal/web/ofederation"
 	"github.com/krisch/crm-backend/pkg/redis"
 
 	validator "github.com/go-playground/validator/v10"
@@ -44,6 +45,26 @@ type Web struct {
 	Version   string
 	Tag       string
 	BuildTime string
+}
+
+// DeleteLegalEntity implements ofederation.StrictServerInterface.
+func (a *Web) DeleteLegalEntity(ctx context.Context, request ofederation.DeleteLegalEntityRequestObject) (ofederation.DeleteLegalEntityResponseObject, error) {
+	panic("unimplemented")
+}
+
+// GetAllLegalEntities implements ofederation.StrictServerInterface.
+func (a *Web) GetAllLegalEntities(ctx context.Context, request ofederation.GetAllLegalEntitiesRequestObject) (ofederation.GetAllLegalEntitiesResponseObject, error) {
+	panic("unimplemented")
+}
+
+// UpdateLegalEntity implements ofederation.StrictServerInterface.
+func (a *Web) UpdateLegalEntity(ctx context.Context, request ofederation.UpdateLegalEntityRequestObject) (ofederation.UpdateLegalEntityResponseObject, error) {
+	panic("unimplemented")
+}
+
+// СreateLegalEntity implements ofederation.StrictServerInterface.
+func (a *Web) СreateLegalEntity(ctx context.Context, request ofederation.СreateLegalEntityRequestObject) (ofederation.СreateLegalEntityResponseObject, error) {
+	panic("unimplemented")
 }
 
 func NewWeb(conf configs.Configs) *Web {
