@@ -279,7 +279,7 @@ func (a *Web) GetTaskUUID(ctx context.Context, request oapi.GetTaskUUIDRequestOb
 		return nil, err
 	}
 
-	if err == nil && dtoFromCache.UUID != uuid.Nil {
+	if err== nil && dtoFromCache.UUID != uuid.Nil {
 		firstOpenDTO := a.patchFirstOpen(&dtoFromCache, claims.UUID)
 
 		dtoFromCache.IsLiked = &isLiked

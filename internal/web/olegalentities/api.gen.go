@@ -128,7 +128,7 @@ func (w *ServerInterfaceWrapper) UpdateLegalEntity(ctx echo.Context) error {
 
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
-// either of them for path registration
+// either of them for path registration.
 type EchoRouter interface {
 	CONNECT(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
 	DELETE(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
@@ -149,7 +149,6 @@ func RegisterHandlers(router EchoRouter, si ServerInterface) {
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
 func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
-
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
@@ -158,11 +157,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/legal-entities", wrapper.CreateLegalEntity)
 	router.DELETE(baseURL+"/legal-entities/:id", wrapper.DeleteLegalEntity)
 	router.PUT(baseURL+"/legal-entities/:id", wrapper.UpdateLegalEntity)
-
 }
 
-type GetAllLegalEntitiesRequestObject struct {
-}
+type GetAllLegalEntitiesRequestObject struct{}
 
 type GetAllLegalEntitiesResponseObject interface {
 	VisitGetAllLegalEntitiesResponse(w http.ResponseWriter) error
@@ -202,8 +199,7 @@ type DeleteLegalEntityResponseObject interface {
 	VisitDeleteLegalEntityResponse(w http.ResponseWriter) error
 }
 
-type DeleteLegalEntity204Response struct {
-}
+type DeleteLegalEntity204Response struct{}
 
 func (response DeleteLegalEntity204Response) VisitDeleteLegalEntityResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
@@ -244,8 +240,10 @@ type StrictServerInterface interface {
 	UpdateLegalEntity(ctx context.Context, request UpdateLegalEntityRequestObject) (UpdateLegalEntityResponseObject, error)
 }
 
-type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
-type StrictMiddlewareFunc = strictecho.StrictEchoMiddlewareFunc
+type (
+	StrictHandlerFunc    = strictecho.StrictEchoHandlerFunc
+	StrictMiddlewareFunc = strictecho.StrictEchoMiddlewareFunc
+)
 
 func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc) ServerInterface {
 	return &strictHandler{ssi: ssi, middlewares: middlewares}
@@ -256,7 +254,7 @@ type strictHandler struct {
 	middlewares []StrictMiddlewareFunc
 }
 
-// GetAllLegalEntities operation middleware
+// GetAllLegalEntities operation middleware.
 func (sh *strictHandler) GetAllLegalEntities(ctx echo.Context) error {
 	var request GetAllLegalEntitiesRequestObject
 
@@ -279,7 +277,7 @@ func (sh *strictHandler) GetAllLegalEntities(ctx echo.Context) error {
 	return nil
 }
 
-// CreateLegalEntity operation middleware
+// CreateLegalEntity operation middleware.
 func (sh *strictHandler) CreateLegalEntity(ctx echo.Context) error {
 	var request CreateLegalEntityRequestObject
 
@@ -308,7 +306,7 @@ func (sh *strictHandler) CreateLegalEntity(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteLegalEntity operation middleware
+// DeleteLegalEntity operation middleware.
 func (sh *strictHandler) DeleteLegalEntity(ctx echo.Context, id openapi_types.UUID) error {
 	var request DeleteLegalEntityRequestObject
 
@@ -333,7 +331,7 @@ func (sh *strictHandler) DeleteLegalEntity(ctx echo.Context, id openapi_types.UU
 	return nil
 }
 
-// UpdateLegalEntity operation middleware
+// UpdateLegalEntity operation middleware.
 func (sh *strictHandler) UpdateLegalEntity(ctx echo.Context, id openapi_types.UUID) error {
 	var request UpdateLegalEntityRequestObject
 
