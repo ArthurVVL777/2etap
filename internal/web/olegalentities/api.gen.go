@@ -58,8 +58,8 @@ type Uuid = openapi_types.UUID
 // PostLegalEntitiesJSONRequestBody defines body for PostLegalEntities for application/json ContentType.
 type PostLegalEntitiesJSONRequestBody = LegalEntityCreateRequest
 
-// PutLegalEntitiesUuidJSONRequestBody defines body for PutLegalEntitiesUuid for application/json ContentType.
-type PutLegalEntitiesUuidJSONRequestBody = LegalEntityUpdateRequest
+// PutLegalEntitiesUUIDJSONRequestBody defines body for PutLegalEntitiesUUID for application/json ContentType.
+type PutLegalEntitiesUUIDJSONRequestBody = LegalEntityUpdateRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -71,10 +71,10 @@ type ServerInterface interface {
 	PostLegalEntities(ctx echo.Context) error
 	// Удалить юридическое лицо
 	// (DELETE /legal-entities/{uuid})
-	DeleteLegalEntitiesUuid(ctx echo.Context, uuid openapi_types.UUID) error
+	DeleteLegalEntitiesUUID(ctx echo.Context, uuid openapi_types.UUID) error
 	// Обновить юридическое лицо
 	// (PUT /legal-entities/{uuid})
-	PutLegalEntitiesUuid(ctx echo.Context, uuid openapi_types.UUID) error
+	PutLegalEntitiesUUID(ctx echo.Context, uuid openapi_types.UUID) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -104,8 +104,8 @@ func (w *ServerInterfaceWrapper) PostLegalEntities(ctx echo.Context) error {
 	return err
 }
 
-// DeleteLegalEntitiesUuid converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteLegalEntitiesUuid(ctx echo.Context) error {
+// DeleteLegalEntitiesUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteLegalEntitiesUUID(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "uuid" -------------
 	var uuid openapi_types.UUID
@@ -118,12 +118,12 @@ func (w *ServerInterfaceWrapper) DeleteLegalEntitiesUuid(ctx echo.Context) error
 	ctx.Set(BearerAuthScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.DeleteLegalEntitiesUuid(ctx, uuid)
+	err = w.Handler.DeleteLegalEntitiesUUID(ctx, uuid)
 	return err
 }
 
-// PutLegalEntitiesUuid converts echo context to params.
-func (w *ServerInterfaceWrapper) PutLegalEntitiesUuid(ctx echo.Context) error {
+// PutLegalEntitiesUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) PutLegalEntitiesUUID(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "uuid" -------------
 	var uuid openapi_types.UUID
@@ -136,7 +136,7 @@ func (w *ServerInterfaceWrapper) PutLegalEntitiesUuid(ctx echo.Context) error {
 	ctx.Set(BearerAuthScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PutLegalEntitiesUuid(ctx, uuid)
+	err = w.Handler.PutLegalEntitiesUUID(ctx, uuid)
 	return err
 }
 
@@ -170,8 +170,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 
 	router.GET(baseURL+"/legal-entities", wrapper.GetLegalEntities)
 	router.POST(baseURL+"/legal-entities", wrapper.PostLegalEntities)
-	router.DELETE(baseURL+"/legal-entities/:uuid", wrapper.DeleteLegalEntitiesUuid)
-	router.PUT(baseURL+"/legal-entities/:uuid", wrapper.PutLegalEntitiesUuid)
+	router.DELETE(baseURL+"/legal-entities/:uuid", wrapper.DeleteLegalEntitiesUUID)
+	router.PUT(baseURL+"/legal-entities/:uuid", wrapper.PutLegalEntitiesUUID)
 
 }
 
@@ -226,51 +226,51 @@ func (response PostLegalEntities401JSONResponse) VisitPostLegalEntitiesResponse(
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteLegalEntitiesUuidRequestObject struct {
+type DeleteLegalEntitiesUUIDRequestObject struct {
 	Uuid openapi_types.UUID `json:"uuid"`
 }
 
-type DeleteLegalEntitiesUuidResponseObject interface {
-	VisitDeleteLegalEntitiesUuidResponse(w http.ResponseWriter) error
+type DeleteLegalEntitiesUUIDResponseObject interface {
+	VisitDeleteLegalEntitiesUUIDResponse(w http.ResponseWriter) error
 }
 
-type DeleteLegalEntitiesUuid204Response struct {
+type DeleteLegalEntitiesUUID204Response struct {
 }
 
-func (response DeleteLegalEntitiesUuid204Response) VisitDeleteLegalEntitiesUuidResponse(w http.ResponseWriter) error {
+func (response DeleteLegalEntitiesUUID204Response) VisitDeleteLegalEntitiesUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteLegalEntitiesUuid401JSONResponse ErrorResponse
+type DeleteLegalEntitiesUUID401JSONResponse ErrorResponse
 
-func (response DeleteLegalEntitiesUuid401JSONResponse) VisitDeleteLegalEntitiesUuidResponse(w http.ResponseWriter) error {
+func (response DeleteLegalEntitiesUUID401JSONResponse) VisitDeleteLegalEntitiesUUIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutLegalEntitiesUuidRequestObject struct {
+type PutLegalEntitiesUUIDRequestObject struct {
 	Uuid openapi_types.UUID `json:"uuid"`
-	Body *PutLegalEntitiesUuidJSONRequestBody
+	Body *PutLegalEntitiesUUIDJSONRequestBody
 }
 
-type PutLegalEntitiesUuidResponseObject interface {
-	VisitPutLegalEntitiesUuidResponse(w http.ResponseWriter) error
+type PutLegalEntitiesUUIDResponseObject interface {
+	VisitPutLegalEntitiesUUIDResponse(w http.ResponseWriter) error
 }
 
-type PutLegalEntitiesUuid204Response struct {
+type PutLegalEntitiesUUID204Response struct {
 }
 
-func (response PutLegalEntitiesUuid204Response) VisitPutLegalEntitiesUuidResponse(w http.ResponseWriter) error {
+func (response PutLegalEntitiesUUID204Response) VisitPutLegalEntitiesUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type PutLegalEntitiesUuid401JSONResponse ErrorResponse
+type PutLegalEntitiesUUID401JSONResponse ErrorResponse
 
-func (response PutLegalEntitiesUuid401JSONResponse) VisitPutLegalEntitiesUuidResponse(w http.ResponseWriter) error {
+func (response PutLegalEntitiesUUID401JSONResponse) VisitPutLegalEntitiesUUIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
@@ -287,10 +287,10 @@ type StrictServerInterface interface {
 	PostLegalEntities(ctx context.Context, request PostLegalEntitiesRequestObject) (PostLegalEntitiesResponseObject, error)
 	// Удалить юридическое лицо
 	// (DELETE /legal-entities/{uuid})
-	DeleteLegalEntitiesUuid(ctx context.Context, request DeleteLegalEntitiesUuidRequestObject) (DeleteLegalEntitiesUuidResponseObject, error)
+	DeleteLegalEntitiesUUID(ctx context.Context, request DeleteLegalEntitiesUUIDRequestObject) (DeleteLegalEntitiesUUIDResponseObject, error)
 	// Обновить юридическое лицо
 	// (PUT /legal-entities/{uuid})
-	PutLegalEntitiesUuid(ctx context.Context, request PutLegalEntitiesUuidRequestObject) (PutLegalEntitiesUuidResponseObject, error)
+	PutLegalEntitiesUUID(ctx context.Context, request PutLegalEntitiesUUIDRequestObject) (PutLegalEntitiesUUIDResponseObject, error)
 }
 
 type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
@@ -357,56 +357,56 @@ func (sh *strictHandler) PostLegalEntities(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteLegalEntitiesUuid operation middleware
-func (sh *strictHandler) DeleteLegalEntitiesUuid(ctx echo.Context, uuid openapi_types.UUID) error {
-	var request DeleteLegalEntitiesUuidRequestObject
+// DeleteLegalEntitiesUUID operation middleware
+func (sh *strictHandler) DeleteLegalEntitiesUUID(ctx echo.Context, uuid openapi_types.UUID) error {
+	var request DeleteLegalEntitiesUUIDRequestObject
 
 	request.Uuid = uuid
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteLegalEntitiesUuid(ctx.Request().Context(), request.(DeleteLegalEntitiesUuidRequestObject))
+		return sh.ssi.DeleteLegalEntitiesUUID(ctx.Request().Context(), request.(DeleteLegalEntitiesUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteLegalEntitiesUuid")
+		handler = middleware(handler, "DeleteLegalEntitiesUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteLegalEntitiesUuidResponseObject); ok {
-		return validResponse.VisitDeleteLegalEntitiesUuidResponse(ctx.Response())
+	} else if validResponse, ok := response.(DeleteLegalEntitiesUUIDResponseObject); ok {
+		return validResponse.VisitDeleteLegalEntitiesUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
 	return nil
 }
 
-// PutLegalEntitiesUuid operation middleware
-func (sh *strictHandler) PutLegalEntitiesUuid(ctx echo.Context, uuid openapi_types.UUID) error {
-	var request PutLegalEntitiesUuidRequestObject
+// PutLegalEntitiesUUID operation middleware
+func (sh *strictHandler) PutLegalEntitiesUUID(ctx echo.Context, uuid openapi_types.UUID) error {
+	var request PutLegalEntitiesUUIDRequestObject
 
 	request.Uuid = uuid
 
-	var body PutLegalEntitiesUuidJSONRequestBody
+	var body PutLegalEntitiesUUIDJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 	request.Body = &body
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PutLegalEntitiesUuid(ctx.Request().Context(), request.(PutLegalEntitiesUuidRequestObject))
+		return sh.ssi.PutLegalEntitiesUUID(ctx.Request().Context(), request.(PutLegalEntitiesUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PutLegalEntitiesUuid")
+		handler = middleware(handler, "PutLegalEntitiesUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(PutLegalEntitiesUuidResponseObject); ok {
-		return validResponse.VisitPutLegalEntitiesUuidResponse(ctx.Response())
+	} else if validResponse, ok := response.(PutLegalEntitiesUUIDResponseObject); ok {
+		return validResponse.VisitPutLegalEntitiesUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

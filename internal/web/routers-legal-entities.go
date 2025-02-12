@@ -27,7 +27,7 @@ func initOpenAPILegalEntitiesRouters(a *Web, e *echo.Echo) {
 }
 
 // GetLegalEntities возвращает список всех юридических лиц.
-func (a *Web) GetLegalEntities(ctx context.Context, request oapi.GetLegalEntitiesRequestObject) (oapi.GetLegalEntitiesResponseObject, error) {
+func (a *Web) GetLegalEntities(ctx context.Context, _ oapi.GetLegalEntitiesRequestObject) (oapi.GetLegalEntitiesResponseObject, error) {
 	defer Span(NewSpan(ctx, "GetLegalEntities"))()
 
 	claims, ok := ctx.Value(claimsKey).(jwt.Claims)
@@ -45,12 +45,13 @@ func (a *Web) GetLegalEntities(ctx context.Context, request oapi.GetLegalEntitie
 
 	response := make([]oapi.LegalEntityDTO, len(entities))
 	for i, entity := range entities {
+		e := entity // Создаем копию перед использованием
 		response[i] = oapi.LegalEntityDTO{
-			Uuid:      entity.UUID,
-			Name:      entity.Name,
-			CreatedAt: entity.CreatedAt,
-			UpdatedAt: &entity.UpdatedAt,
-			DeletedAt: entity.DeletedAt,
+			Uuid:      e.UUID,
+			Name:      e.Name,
+			CreatedAt: e.CreatedAt,
+			UpdatedAt: &e.UpdatedAt,
+			DeletedAt: e.DeletedAt,
 		}
 	}
 
@@ -80,7 +81,7 @@ func (a *Web) PostLegalEntities(ctx context.Context, request oapi.PostLegalEntit
 }
 
 // PutLegalEntitiesUuid обновляет юридическое лицо.
-func (a *Web) PutLegalEntitiesUuid(ctx context.Context, request oapi.PutLegalEntitiesUuidRequestObject) (oapi.PutLegalEntitiesUuidResponseObject, error) {
+func (a *Web) PutLegalEntitiesUUID(ctx context.Context, request oapi.PutLegalEntitiesUUIDRequestObject) (oapi.PutLegalEntitiesUUIDResponseObject, error) {
 	defer Span(NewSpan(ctx, "PutLegalEntitiesUuid"))()
 
 	claims, ok := ctx.Value(claimsKey).(jwt.Claims)
@@ -96,11 +97,11 @@ func (a *Web) PutLegalEntitiesUuid(ctx context.Context, request oapi.PutLegalEnt
 		return nil, err
 	}
 
-	return oapi.PutLegalEntitiesUuid204Response{}, nil
+	return oapi.PutLegalEntitiesUUID204Response{}, nil
 }
 
 // DeleteLegalEntitiesUuid удаляет юридическое лицо.
-func (a *Web) DeleteLegalEntitiesUuid(ctx context.Context, request oapi.DeleteLegalEntitiesUuidRequestObject) (oapi.DeleteLegalEntitiesUuidResponseObject, error) {
+func (a *Web) DeleteLegalEntitiesUUID(ctx context.Context, request oapi.DeleteLegalEntitiesUUIDRequestObject) (oapi.DeleteLegalEntitiesUUIDResponseObject, error) {
 	defer Span(NewSpan(ctx, "DeleteLegalEntitiesUuid"))()
 
 	claims, ok := ctx.Value(claimsKey).(jwt.Claims)
@@ -116,5 +117,5 @@ func (a *Web) DeleteLegalEntitiesUuid(ctx context.Context, request oapi.DeleteLe
 		return nil, err
 	}
 
-	return oapi.DeleteLegalEntitiesUuid204Response{}, nil
+	return oapi.DeleteLegalEntitiesUUID204Response{}, nil
 }

@@ -708,7 +708,7 @@ paths:
 
   /legal-entities/{uuid}:
     put:
-      operationId: PutLegalEntitiesUuid
+      operationId: PutLegalEntitiesUUID
       tags:
         - legal-entities
       summary: Обновить юридическое лицо
@@ -738,7 +738,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
     delete:
-      operationId: deleteLegalEntitiesUuid
+      operationId: deleteLegalEntitiesUUID
       tags:
         - legal-entities
       summary: Удалить юридическое лицо

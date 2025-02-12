@@ -91,6 +91,7 @@ func (r *Repository) UpdateLegalEntity(ctx context.Context, uid uuid.UUID, name 
 	r.PubUpdate()
 	return res.Error
 }
+
 func (r *Repository) DeleteLegalEntity(ctx context.Context, uid uuid.UUID) error {
 	defer r.apply(ctx, "DeleteLegalEntity")() // Передаем контекст
 
