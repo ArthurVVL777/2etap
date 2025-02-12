@@ -102,7 +102,7 @@ github:
 
 .PHONY: gen
 gen:  
-	for tag in omain oprofile ofederation oproject otask oreminder ocatalog olegalentities; do \
+	for tag in omain oprofile ofederation oproject otask oreminder ocatalog; do \
 		rm -rf ./internal/web/$$tag/; \
 		mkdir -p ./internal/web/$$tag; \
 	done

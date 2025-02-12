@@ -1,21 +1,20 @@
 -- Удаляем таблицу, если она уже существует
-DROP TABLE IF EXISTS "public"."legalentities" CASCADE;
+DROP TABLE IF EXISTS "public"."legal_entities" CASCADE;
 
 -- Создаём таблицу
-CREATE TABLE "public"."legalentities" (
-    "uuid" UUID DEFAULT gen_random_uuid(),
+CREATE TABLE "public"."legal_entities" (
+    "uuid" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     "name" VARCHAR(255) NOT NULL UNIQUE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
     "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-    "deleted_at" TIMESTAMPTZ,
-    PRIMARY KEY ("uuid")
+    "deleted_at" TIMESTAMPTZ
 );
 
 -- Индексы для оптимизации запросов
-CREATE INDEX "legalentities_created_at" ON "public"."legalentities" ("created_at" DESC);
-CREATE INDEX "legalentities_updated_at" ON "public"."legalentities" ("updated_at" DESC);
+CREATE INDEX "legal_entities_created_at_idx" ON "public"."legal_entities" ("created_at" DESC);
+CREATE INDEX "legal_entities_updated_at_idx" ON "public"."legal_entities" ("updated_at" DESC);
 
--- Удаляем старую функцию, если она уже есть (аналогично `federations`)
+-- Удаляем старую функцию, если она уже есть (на всякий случай)
 DROP FUNCTION IF EXISTS update_timestamp() CASCADE;
 
 -- Создаём новую функцию обновления поля updated_at
@@ -27,7 +26,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Создаём триггер для автоматического обновления updated_at
-CREATE TRIGGER update_legalentities_updated_at
-BEFORE UPDATE ON "public"."legalentities"
+CREATE TRIGGER update_legal_entities_updated_at
+BEFORE UPDATE ON "public"."legal_entities"
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
