@@ -658,7 +658,7 @@ paths:
     get:
       operationId: GetAllBankAccounts
       tags:
-        - federation
+        - legal-entities
       parameters:
         - name: legalEntityId
           in: query
@@ -676,28 +676,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/BankAccountDTO'
     post:
-      operationId: PostBankAccount
-      tags:
-        - federation
-      requestBody:
-        required: true
+     operationId: PostBankAccount
+     tags:
+      - legal-entities
+     requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BankAccountCreateRequest' # ✅ исправлено
+     responses:
+      201:
+        description: Банковский счет успешно создан
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/BankAccountDTO'
-      responses:
-        201:
-          description: Банковский счет успешно создан
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BankAccountDTO'
 
   /bank-accounts/{uuid}:
     put:
       operationId: PutBankAccount
       tags:
-        - federation
+        - legal-entities
       parameters:
         - name: uuid
           in: path
@@ -710,14 +710,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BankAccountDTO'
+              $ref: '#/components/schemas/BankAccountUpdateRequest' # ✅ исправлено
       responses:
         204:
           description: Банковский счет успешно обновлен
     delete:
       operationId: DeleteBankAccount
       tags:
-        - federation
+        - legal-entities
       parameters:
         - name: uuid
           in: path
