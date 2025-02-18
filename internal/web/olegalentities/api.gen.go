@@ -55,6 +55,7 @@ type BankAccountUpdateRequest struct {
 	CorrAccount   *string            `json:"corr_account,omitempty"`
 	Currency      *string            `json:"currency,omitempty"`
 	Id            openapi_types.UUID `json:"id"`
+	LegalEntityId openapi_types.UUID `json:"legal_entity_id"`
 }
 
 // ErrorResponse defines model for ErrorResponse.

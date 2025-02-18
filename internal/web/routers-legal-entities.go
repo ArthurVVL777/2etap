@@ -140,15 +140,14 @@ func (a *Web) GetAllBankAccounts(ctx context.Context, request oapi.GetAllBankAcc
 func (a *Web) PostBankAccount(ctx context.Context, request oapi.PostBankAccountRequestObject) (oapi.PostBankAccountResponseObject, error) {
 	bankAccount := domain.BankAccount{
 		ID:            uuid.New(),
-		LegalEntityID: uuid.MustParse(request.Body.LegalEntityId),
-		BIK:           request.Body.Bik,
+		LegalEntityID: request.Body.LegalEntityID, // ✅ Исправлено
+		BIK:           request.Body.BIK,
 		BankName:      request.Body.BankName,
 		Address:       request.Body.Address,
 		CorrAccount:   request.Body.CorrAccount,
 		AccountNumber: request.Body.AccountNumber,
 		Currency:      request.Body.Currency,
 		Comment:       request.Body.Comment,
-	
 	}
 
 	account, err := a.app.LegalEntitiesService.CreateBankAccount(ctx, bankAccount)
@@ -162,16 +161,15 @@ func (a *Web) PostBankAccount(ctx context.Context, request oapi.PostBankAccountR
 // PutBankAccount обновляет банковский счет
 func (a *Web) PutBankAccount(ctx context.Context, request oapi.PutBankAccountRequestObject) (oapi.PutBankAccountResponseObject, error) {
 	bankAccount := domain.BankAccount{
-		ID:            uuid.MustParse(request.Uuid),
-		LegalEntityID: uuid.MustParse(request.Body.LegalEntityId),
-		BIK:           request.Body.Bik,
+		ID:            request.Body.ID,            // ✅ Используем ID из тела запроса
+		LegalEntityID: request.Body.LegalEntityID, // ✅ Исправлено
+		BIK:           request.Body.BIK,
 		BankName:      request.Body.BankName,
 		Address:       request.Body.Address,
 		CorrAccount:   request.Body.CorrAccount,
 		AccountNumber: request.Body.AccountNumber,
 		Currency:      request.Body.Currency,
 		Comment:       request.Body.Comment,
-		
 	}
 
 	err := a.app.LegalEntitiesService.UpdateBankAccount(ctx, bankAccount)
