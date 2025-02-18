@@ -102,7 +102,7 @@ github:
 
 .PHONY: gen
 gen:  
-	for tag in omain oprofile ofederation oproject otask oreminder ocatalog; do \
+	for tag in omain oprofile ofederation oproject otask oreminder ocatalog olegalentities; do \
 		rm -rf ./internal/web/$$tag/; \
 		mkdir -p ./internal/web/$$tag; \
 	done
@@ -114,8 +114,8 @@ gen:
 	oapi-codegen -config openapi/.openapi  -include-tags task -package otask openapi/openapi.yaml > ./internal/web/otask/api.gen.go
 	oapi-codegen -config openapi/.openapi  -include-tags reminder -package oreminder openapi/openapi.yaml > ./internal/web/oreminder/api.gen.go
 	oapi-codegen -config openapi/.openapi  -include-tags catalog -package ocatalog openapi/openapi.yaml > ./internal/web/ocatalog/api.gen.go
-	oapi-codegen -config openapi/.openapi  -include-tags legal-entities -package olegalentities openapi/openapi.yaml > ./internal/web/olegalentities/api.gen.go
-
+	oapi-codegen -config openapi/.openapi  -include-tags legal-entities,bank-accounts -package olegalentities openapi/openapi.yaml > ./internal/web/olegalentities/api.gen.go
+	
 
 
 

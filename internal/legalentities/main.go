@@ -51,3 +51,21 @@ func (s *Service) DeleteLegalEntity(ctx context.Context, uid uuid.UUID) (err err
 	err = s.repo.DeleteLegalEntity(ctx, uid)
 	return err
 }
+
+// BankAccount.
+func (s *Service) GetAllBankAccounts(ctx context.Context, legalEntityID uuid.UUID) ([]domain.BankAccount, error) {
+	return s.repo.GetAllBankAccounts(ctx, legalEntityID)
+}
+
+func (s *Service) CreateBankAccount(ctx context.Context, account domain.BankAccount) (domain.BankAccount, error) {
+	err := s.repo.CreateBankAccount(ctx, &account)
+	return account, err
+}
+
+func (s *Service) UpdateBankAccount(ctx context.Context, account domain.BankAccount) error {
+	return s.repo.UpdateBankAccount(ctx, &account)
+}
+
+func (s *Service) DeleteBankAccount(ctx context.Context, id uuid.UUID) error {
+	return s.repo.DeleteBankAccount(ctx, id)
+}

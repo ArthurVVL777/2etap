@@ -152,6 +152,7 @@ func NewApp(name string, conf *configs.Configs, gdb *postgres.GDB, rds *redis.RD
 	agentsService *agents.Service,
 	permissionsService *permissions.Service,
 	legalEntitiesService *legalentities.Service,
+
 ) *App {
 	w := &App{
 		Env:  conf.ENV,

@@ -3,15 +3,17 @@ package web
 import (
 	"context"
 
+	"github.com/google/uuid"
+	"github.com/krisch/crm-backend/domain"
 	"github.com/krisch/crm-backend/internal/jwt"
 	oapi "github.com/krisch/crm-backend/internal/web/olegalentities"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
 
-// initOpenAPILegalEntitiesRouters инициализирует маршруты для юридических лиц.
+// initOpenAPILegalEntitiesRouters инициализирует маршруты для юридических лиц и банковских счетов.
 func initOpenAPILegalEntitiesRouters(a *Web, e *echo.Echo) {
-	logrus.WithField("route", "legal-entities").Info("Initializing routes for legal entities")
+	logrus.WithField("route", "legal-entities").Info("Initializing routes for legal entities and bank accounts")
 
 	// Middleware
 	middlewares := []oapi.StrictMiddlewareFunc{
@@ -23,7 +25,7 @@ func initOpenAPILegalEntitiesRouters(a *Web, e *echo.Echo) {
 	handlers := oapi.NewStrictHandler(a, middlewares)
 	oapi.RegisterHandlers(e, handlers)
 
-	logrus.WithField("route", "legal-entities").Info("Routes for legal entities registered successfully")
+	logrus.WithField("route", "legal-entities").Info("Routes for legal entities and bank accounts registered successfully")
 }
 
 // GetLegalEntities возвращает список всех юридических лиц.
@@ -80,9 +82,9 @@ func (a *Web) PostLegalEntities(ctx context.Context, request oapi.PostLegalEntit
 	}, nil
 }
 
-// PutLegalEntitiesUuid обновляет юридическое лицо.
+// PutLegalEntitiesUUID обновляет юридическое лицо.
 func (a *Web) PutLegalEntitiesUUID(ctx context.Context, request oapi.PutLegalEntitiesUUIDRequestObject) (oapi.PutLegalEntitiesUUIDResponseObject, error) {
-	defer Span(NewSpan(ctx, "PutLegalEntitiesUuid"))()
+	defer Span(NewSpan(ctx, "PutLegalEntitiesUUID"))()
 
 	claims, ok := ctx.Value(claimsKey).(jwt.Claims)
 	if !ok {
@@ -100,9 +102,9 @@ func (a *Web) PutLegalEntitiesUUID(ctx context.Context, request oapi.PutLegalEnt
 	return oapi.PutLegalEntitiesUUID204Response{}, nil
 }
 
-// DeleteLegalEntitiesUuid удаляет юридическое лицо.
+// DeleteLegalEntitiesUUID удаляет юридическое лицо.
 func (a *Web) DeleteLegalEntitiesUUID(ctx context.Context, request oapi.DeleteLegalEntitiesUUIDRequestObject) (oapi.DeleteLegalEntitiesUUIDResponseObject, error) {
-	defer Span(NewSpan(ctx, "DeleteLegalEntitiesUuid"))()
+	defer Span(NewSpan(ctx, "DeleteLegalEntitiesUUID"))()
 
 	claims, ok := ctx.Value(claimsKey).(jwt.Claims)
 	if !ok {
@@ -118,4 +120,74 @@ func (a *Web) DeleteLegalEntitiesUUID(ctx context.Context, request oapi.DeleteLe
 	}
 
 	return oapi.DeleteLegalEntitiesUUID204Response{}, nil
+}
+
+
+
+
+
+// GetAllBankAccounts возвращает список всех банковских счетов юридического лица.
+func (a *Web) GetAllBankAccounts(ctx context.Context, request oapi.GetAllBankAccountsRequestObject) (oapi.GetAllBankAccountsResponseObject, error) {
+	accounts, err := a.app.LegalEntitiesService.GetAllBankAccounts(ctx, request.Params.LegalEntityId)
+	if err != nil {
+		return nil, err
+	}
+
+	return oapi.GetAllBankAccounts200JSONResponse(accounts), nil
+}
+
+// PostBankAccount создает новый банковский счет
+func (a *Web) PostBankAccount(ctx context.Context, request oapi.PostBankAccountRequestObject) (oapi.PostBankAccountResponseObject, error) {
+	bankAccount := domain.BankAccount{
+		ID:            uuid.New(),
+		LegalEntityID: uuid.MustParse(request.Body.LegalEntityId),
+		BIK:           request.Body.Bik,
+		BankName:      request.Body.BankName,
+		Address:       request.Body.Address,
+		CorrAccount:   request.Body.CorrAccount,
+		AccountNumber: request.Body.AccountNumber,
+		Currency:      request.Body.Currency,
+		Comment:       request.Body.Comment,
+	
+	}
+
+	account, err := a.app.LegalEntitiesService.CreateBankAccount(ctx, bankAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	return oapi.PostBankAccount201JSONResponse(account), nil
+}
+
+// PutBankAccount обновляет банковский счет
+func (a *Web) PutBankAccount(ctx context.Context, request oapi.PutBankAccountRequestObject) (oapi.PutBankAccountResponseObject, error) {
+	bankAccount := domain.BankAccount{
+		ID:            uuid.MustParse(request.Uuid),
+		LegalEntityID: uuid.MustParse(request.Body.LegalEntityId),
+		BIK:           request.Body.Bik,
+		BankName:      request.Body.BankName,
+		Address:       request.Body.Address,
+		CorrAccount:   request.Body.CorrAccount,
+		AccountNumber: request.Body.AccountNumber,
+		Currency:      request.Body.Currency,
+		Comment:       request.Body.Comment,
+		
+	}
+
+	err := a.app.LegalEntitiesService.UpdateBankAccount(ctx, bankAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	return oapi.PutBankAccount204Response{}, nil
+}
+
+// DeleteBankAccount удаляет банковский счет
+func (a *Web) DeleteBankAccount(ctx context.Context, request oapi.DeleteBankAccountRequestObject) (oapi.DeleteBankAccountResponseObject, error) {
+	err := a.app.LegalEntitiesService.DeleteBankAccount(ctx, request.Uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	return oapi.DeleteBankAccount204Response{}, nil
 }

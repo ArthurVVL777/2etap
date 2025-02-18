@@ -16,6 +16,11 @@ type RepositoryInterface interface {
 	CreateLegalEntity(ctx context.Context, entity *domain.LegalEntity) error
 	UpdateLegalEntity(ctx context.Context, uid uuid.UUID, name string) error
 	DeleteLegalEntity(ctx context.Context, uid uuid.UUID) error
+
+	GetAllBankAccounts(ctx context.Context, legalEntityID uuid.UUID) ([]domain.BankAccount, error)
+	CreateBankAccount(ctx context.Context, account *domain.BankAccount) error
+	UpdateBankAccount(ctx context.Context, account *domain.BankAccount) error
+	DeleteBankAccount(ctx context.Context, id uuid.UUID) error
 }
 
 type Repository struct {
@@ -115,4 +120,74 @@ func (r *Repository) GetAllLegalEntities(ctx context.Context) ([]domain.LegalEnt
 		return nil, err
 	}
 	return entities, nil
+}
+
+// BankAccount
+
+func (r *Repository) GetAllBankAccounts(ctx context.Context, legalEntityID uuid.UUID) ([]domain.BankAccount, error) {
+	var accounts []domain.BankAccount
+	if err := r.gorm.DB.WithContext(ctx).
+		Where("legal_entity_id = ?", legalEntityID).
+		Where("deleted_at IS NULL").
+		Find(&accounts).Error; err != nil {
+		return nil, err
+	}
+	return accounts, nil
+}
+
+func (r *Repository) CreateBankAccount(ctx context.Context, account *domain.BankAccount) error {
+	defer r.apply(ctx, "CreateBankAccount")()
+
+	if account == nil {
+		return errors.New("передан пустой банковский счет")
+	}
+
+	if err := r.gorm.DB.WithContext(ctx).Create(account).Error; err != nil {
+		return err
+	}
+
+	r.PubUpdate()
+	return nil
+}
+
+func (r *Repository) UpdateBankAccount(ctx context.Context, account *domain.BankAccount) error {
+	defer r.apply(ctx, "UpdateBankAccount")()
+
+	res := r.gorm.DB.WithContext(ctx).
+		Model(&domain.BankAccount{}).
+		Where("id = ?", account.ID).
+		Updates(map[string]interface{}{
+			"bik":            account.BIK,
+			"bank_name":      account.BankName,
+			"address":        account.Address,
+			"corr_account":   account.CorrAccount,
+			"account_number": account.AccountNumber,
+			"currency":       account.Currency,
+			"comment":        account.Comment,
+			"updated_at":     "now()",
+		})
+
+	if res.RowsAffected == 0 {
+		return errors.New("банковский счет не найден")
+	}
+
+	r.PubUpdate()
+	return res.Error
+}
+
+func (r *Repository) DeleteBankAccount(ctx context.Context, id uuid.UUID) error {
+	defer r.apply(ctx, "DeleteBankAccount")()
+
+	res := r.gorm.DB.WithContext(ctx).
+		Model(&domain.BankAccount{}).
+		Where("id = ?", id).
+		Where("deleted_at IS NULL").
+		Update("deleted_at", "now()")
+
+	if res.RowsAffected == 0 {
+		return errors.New("банковский счет не найден")
+	}
+
+	r.PubUpdate()
+	return res.Error
 }

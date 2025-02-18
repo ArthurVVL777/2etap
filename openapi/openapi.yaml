@@ -651,8 +651,84 @@ paths:
           description: Ok
         401:
           description: Unauthorized
+  
+  
+#начало
+  /bank-accounts:
+    get:
+      operationId: GetAllBankAccounts
+      tags:
+        - federation
+      parameters:
+        - name: legalEntityId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Список банковских счетов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountDTO'
+    post:
+      operationId: PostBankAccount
+      tags:
+        - federation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountDTO'
+      responses:
+        201:
+          description: Банковский счет успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDTO'
 
-  #начало
+  /bank-accounts/{uuid}:
+    put:
+      operationId: PutBankAccount
+      tags:
+        - federation
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountDTO'
+      responses:
+        204:
+          description: Банковский счет успешно обновлен
+    delete:
+      operationId: DeleteBankAccount
+      tags:
+        - federation
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: Банковский счет успешно удален
+  #конец
   
 
   /legal-entities:
@@ -762,7 +838,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
 
-#конец
+
   /permissions:
     post:
       description: Get permissions
@@ -4477,7 +4553,90 @@ components:
         email:
           type: string
 
-    #начало DTO
+#начало DTO
+    BankAccountDTO:
+      type: object
+      required:
+        - id
+        - legal_entity_id
+        - bik
+        - bank_name
+        - address
+        - corr_account
+        - account_number
+        - currency
+        - comment
+      properties:
+        id:
+          type: string
+          format: uuid
+        legal_entity_id:
+          type: string
+          format: uuid
+        bik:
+          type: string
+        bank_name:
+          type: string
+        address:
+          type: string
+        corr_account:  # ✅ исправлено
+          type: string
+        account_number:
+          type: string
+        currency:
+          type: string
+        comment:
+          type: string
+
+    BankAccountCreateRequest:
+      type: object
+      required:
+        - legal_entity_id
+        - account_number
+      properties:
+        legal_entity_id:  # ✅ исправлено
+          type: string
+          format: uuid
+        bik:
+          type: string
+        bank_name:
+          type: string
+        address:
+          type: string
+        corr_account:  # ✅ исправлено
+          type: string
+        account_number:
+          type: string
+        currency:
+          type: string
+        comment:
+          type: string
+
+    BankAccountUpdateRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+        bik:
+          type: string
+        bank_name:
+          type: string
+        address:
+          type: string
+        corr_account:  # ✅ исправлено
+          type: string
+        account_number:
+          type: string
+        currency:
+          type: string
+        comment:
+          type: string
+
+
+    #конец DTO
 
     LegalEntityDTO:
       type: object
@@ -4535,7 +4694,7 @@ components:
         message:
           type: string
 
-    #конец DTO
+    
 
     GroupDTO:
       x-go-type: dto.GroupDTO
