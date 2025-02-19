@@ -144,7 +144,7 @@ func (a *Web) PostBankAccount(ctx context.Context, request oapi.PostBankAccountR
 		BIK:           *request.Body.Bik,
 		BankName:      *request.Body.BankName,
 		Address:       *request.Body.Address,
-		CorrAccount:   request.Body.CorrAccount,
+		CorrAccount:   *request.Body.CorrAccount,
 		AccountNumber: request.Body.AccountNumber,
 		Currency:      *request.Body.Currency,
 		Comment:       *request.Body.Comment,

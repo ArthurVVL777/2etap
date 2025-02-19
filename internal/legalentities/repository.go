@@ -157,14 +157,13 @@ func (r *Repository) UpdateBankAccount(ctx context.Context, account *domain.Bank
 		Model(&domain.BankAccount{}).
 		Where("id = ?", account.ID).
 		Updates(map[string]interface{}{
-			"bik":            account.BIK,
-			"bank_name":      account.BankName,
-			"address":        account.Address,
-			"corr_account":   account.CorrAccount,
+			"bik":       account.BIK,
+			"bank_name": account.BankName,
+			"address":   account.Address,
+			// "corr_account":   account.CorrAccount,
 			"account_number": account.AccountNumber,
 			"currency":       account.Currency,
 			"comment":        account.Comment,
-			"updated_at":     "now()",
 		})
 
 	if res.RowsAffected == 0 {

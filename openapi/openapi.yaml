@@ -4555,103 +4555,92 @@ components:
 
 #начало DTO
     BankAccountCreateRequest:
-      type: object
-      required:
-        - legal_entity_id
-        - account_number
-      properties:
-        legal_entity_id:
-          type: string
-          format: uuid
-        bik:
-          type: string
-          nullable: false
-        bank_name:
-          type: string
-          nullable: false
-        address:
-          type: string
-          nullable: false
-        corr_account:
-          type: string
-          nullable: false
-        account_number:
-          type: string
-          nullable: false
-        currency:
-          type: string
-          nullable: false
-        comment:
-          type: string
-          nullable: false
+     type: object
+     required:
+     - legal_entity_id
+     - account_number
+     - corr_account
+     properties:
+      legal_entity_id:
+       type: string
+       format: uuid
+    bik:
+      type: string
+    bank_name:
+      type: string
+    address:
+      type: string
+    corr_account:    # ✅ Добавлено корректно
+      type: string
+    account_number:
+      type: string
+    currency:
+      type: string
+    comment:
+      type: string
 
     BankAccountDTO:
-      type: object
-      required:
-        - id
-        - legal_entity_id
-        - account_number
-        - address
-        - bank_name
-        - bik
-        - comment
-        - corr_account
-        - currency
-      properties:
-        id:
-          type: string
-          format: uuid
-        legal_entity_id:
-          type: string
-          format: uuid
-        account_number:
-          type: string
-        address:
-          type: string
-        bank_name:
-          type: string
-        bik:
-          type: string
-        comment:
-          type: string
-        corr_account:
-          type: string
-        currency:
-          type: string
+     type: object
+     required:
+     - id
+     - legal_entity_id
+     - account_number
+     - address
+     - bank_name
+     - bik
+     - comment
+     - corr_account
+     - currency
+     properties:
+      id:
+       type: string
+       format: uuid
+      legal_entity_id:
+       type: string
+       format: uuid
+      account_number:
+       type: string
+      address:
+       type: string
+      bank_name:
+       type: string
+      bik:
+       type: string
+      comment:
+       type: string
+      corr_account:
+       type: string
+      currency:
+       type: string
 
     BankAccountUpdateRequest:
-      type: object
-      required:
-        - id
-        - legal_entity_id
-      properties:
-        id:
-          type: string
-          format: uuid
-        legal_entity_id:
-          type: string
-          format: uuid
-        account_number:
-          type: string
-          nullable: false
-        address:
-          type: string
-          nullable: false
-        bank_name:
-          type: string
-          nullable: false
-        bik:
-          type: string
-          nullable: false
-        comment:
-          type: string
-          nullable: false
-        corr_account:
-          type: string
-          nullable: false
-        currency:
-          type: string
-          nullable: false
+     type: object
+     required:
+     - id
+     - legal_entity_id
+     - corr_account
+     properties:
+      id:
+       type: string
+       format: uuid
+      legal_entity_id:
+       type: string
+       format: uuid
+      account_number:
+       type: string
+      address:
+       type: string
+      bank_name:
+       type: string
+      bik:
+       type: string
+      comment:
+       type: string
+      corr_account:
+       type: string
+      currency:
+       type: string
+      
 
     #конец DTO
 
