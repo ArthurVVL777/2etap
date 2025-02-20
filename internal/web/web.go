@@ -301,7 +301,6 @@ func (a *Web) Init() *echo.Echo {
 	initOpenAPIReminderRouters(a, e)
 	initOpenAPIcatalogRouters(a, e)
 	initOpenAPILegalEntitiesRouters(a, e)
-	
 
 	// Special routes
 	e.File("/openapi.yaml", "./openapi.yaml", middleware.CORSWithConfig(middleware.CORSConfig{

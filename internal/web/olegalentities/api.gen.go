@@ -22,25 +22,32 @@ const (
 
 // BankAccountCreateRequest defines model for BankAccountCreateRequest.
 type BankAccountCreateRequest struct {
+	AccountNumber string             `json:"account_number"`
+	Address       *string            `json:"address,omitempty"`
+	BankName      *string            `json:"bank_name,omitempty"`
+	Bik           *string            `json:"bik,omitempty"`
+	Comment       *string            `json:"comment,omitempty"`
+	CorrAccount   string             `json:"corr_account"`
+	Currency      *string            `json:"currency,omitempty"`
 	LegalEntityId openapi_types.UUID `json:"legal_entity_id"`
 }
 
 // BankAccountDTO defines model for BankAccountDTO.
 type BankAccountDTO struct {
 	AccountNumber string             `json:"account_number"`
-	Address       string             `json:"address"`
-	BankName      string             `json:"bank_name"`
-	Bik           string             `json:"bik"`
-	Comment       string             `json:"comment"`
+	Address       *string            `json:"address,omitempty"`
+	BankName      *string            `json:"bank_name,omitempty"`
+	Bik           *string            `json:"bik,omitempty"`
+	Comment       *string            `json:"comment,omitempty"`
 	CorrAccount   string             `json:"corr_account"`
-	Currency      string             `json:"currency"`
+	Currency      *string            `json:"currency,omitempty"`
 	Id            openapi_types.UUID `json:"id"`
 	LegalEntityId openapi_types.UUID `json:"legal_entity_id"`
 }
 
 // BankAccountUpdateRequest defines model for BankAccountUpdateRequest.
 type BankAccountUpdateRequest struct {
-	AccountNumber *string            `json:"account_number,omitempty"`
+	AccountNumber string             `json:"account_number"`
 	Address       *string            `json:"address,omitempty"`
 	BankName      *string            `json:"bank_name,omitempty"`
 	Bik           *string            `json:"bik,omitempty"`

@@ -122,10 +122,6 @@ func (a *Web) DeleteLegalEntitiesUUID(ctx context.Context, request oapi.DeleteLe
 	return oapi.DeleteLegalEntitiesUUID204Response{}, nil
 }
 
-
-
-
-
 // GetAllBankAccounts возвращает список всех банковских счетов юридического лица.
 func (a *Web) GetAllBankAccounts(ctx context.Context, request oapi.GetAllBankAccountsRequestObject) (oapi.GetAllBankAccountsResponseObject, error) {
 	accounts, err := a.app.LegalEntitiesService.GetAllBankAccounts(ctx, request.Params.LegalEntityId)
@@ -133,18 +129,31 @@ func (a *Web) GetAllBankAccounts(ctx context.Context, request oapi.GetAllBankAcc
 		return nil, err
 	}
 
-	return oapi.GetAllBankAccounts200JSONResponse(accounts), nil
+	response := make([]oapi.BankAccountDTO, len(accounts))
+	for i, acc := range accounts {
+		response[i] = oapi.BankAccountDTO{
+			Id:            acc.ID,
+			LegalEntityId: acc.LegalEntityID,
+			Bik:           &acc.BIK,
+			BankName:      &acc.BankName,
+			Address:       &acc.Address,
+			AccountNumber: acc.AccountNumber,
+			Currency:      &acc.Currency,
+			Comment:       &acc.Comment,
+		}
+	}
+
+	return oapi.GetAllBankAccounts200JSONResponse(response), nil
 }
 
-// PostBankAccount создает новый банковский счет
+// PostBankAccount создает новый банковский счет.
 func (a *Web) PostBankAccount(ctx context.Context, request oapi.PostBankAccountRequestObject) (oapi.PostBankAccountResponseObject, error) {
 	bankAccount := domain.BankAccount{
-		ID:            uuid.New(),
-		LegalEntityID: request.Body.LegalEntityId, // ✅ Исправлено
+		ID:            uuid.New(), // Генерируем новый UUID
+		LegalEntityID: request.Body.LegalEntityId,
 		BIK:           *request.Body.Bik,
 		BankName:      *request.Body.BankName,
 		Address:       *request.Body.Address,
-		CorrAccount:   *request.Body.CorrAccount,
 		AccountNumber: request.Body.AccountNumber,
 		Currency:      *request.Body.Currency,
 		Comment:       *request.Body.Comment,
@@ -155,32 +164,49 @@ func (a *Web) PostBankAccount(ctx context.Context, request oapi.PostBankAccountR
 		return nil, err
 	}
 
-	return oapi.PostBankAccount201JSONResponse(account), nil
+	return oapi.PostBankAccount201JSONResponse{
+		Id:            account.ID,
+		LegalEntityId: account.LegalEntityID,
+		Bik:           &account.BIK,
+		BankName:      &account.BankName,
+		Address:       &account.Address,
+		AccountNumber: account.AccountNumber,
+		Currency:      &account.Currency,
+		Comment:       &account.Comment,
+	}, nil
 }
 
-// PutBankAccount обновляет банковский счет
 func (a *Web) PutBankAccount(ctx context.Context, request oapi.PutBankAccountRequestObject) (oapi.PutBankAccountResponseObject, error) {
+	defer Span(NewSpan(ctx, "PutBankAccount"))()
+
+	claims, ok := ctx.Value(claimsKey).(jwt.Claims)
+	if !ok {
+		return nil, ErrInvalidAuthHeader
+	}
+
+	logrus.WithField("user_email", claims.Email).Info("Обновление банковского счета")
+
 	bankAccount := domain.BankAccount{
-		ID:            request.Body.Id,            // ✅ Используем ID из тела запроса
-		LegalEntityID: request.Body.LegalEntityId, // ✅ Исправлено
+		ID:            request.Body.Id,
+		LegalEntityID: request.Body.LegalEntityId,
 		BIK:           *request.Body.Bik,
 		BankName:      *request.Body.BankName,
 		Address:       *request.Body.Address,
-		CorrAccount:   *request.Body.CorrAccount,
-		AccountNumber: *request.Body.AccountNumber,
+		AccountNumber: request.Body.AccountNumber,
 		Currency:      *request.Body.Currency,
 		Comment:       *request.Body.Comment,
 	}
 
 	err := a.app.LegalEntitiesService.UpdateBankAccount(ctx, bankAccount)
 	if err != nil {
+		logrus.Errorf("Ошибка обновления банковского счета: %v", err)
 		return nil, err
 	}
 
 	return oapi.PutBankAccount204Response{}, nil
 }
 
-// DeleteBankAccount удаляет банковский счет
+// DeleteBankAccount удаляет банковский счет.
 func (a *Web) DeleteBankAccount(ctx context.Context, request oapi.DeleteBankAccountRequestObject) (oapi.DeleteBankAccountResponseObject, error) {
 	err := a.app.LegalEntitiesService.DeleteBankAccount(ctx, request.Uuid)
 	if err != nil {
